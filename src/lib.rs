@@ -1,3 +1,5 @@
+#![no_std]
+
 pub type Precondition<S> = fn(&S) -> bool;
 
 pub type Activation<S> = fn(&mut S);
@@ -72,12 +74,13 @@ mod tests {
         state.count += 1;
     }
 
+    static TEST_TT: [Transition<State>; 2] = [(needs_decrease, decrement), (needs_increase, increment)];
+
     #[test]
     fn test_fsm_increasing() {
         let (min_val, max_val, increasing) = (0, 5, true);
         let initial_state = State::new(min_val, max_val, increasing);
-        let tt: Vec<Transition<State>> = vec![(needs_decrease, decrement), (needs_increase, increment)];
-        let mut fsm = Fsm::new(initial_state, &tt);
+        let mut fsm = Fsm::new(initial_state, &TEST_TT);
 
         assert_eq!(min_val, fsm.get_state().min_val);
         assert_eq!(max_val, fsm.get_state().max_val);
